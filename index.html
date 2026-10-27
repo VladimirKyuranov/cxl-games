@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Play the CXL Games network — five free worlds, one account</title>
+  <meta name="description" content="Register for all five CXL Games worlds through one hub: Lightning Quest, Lightning Miner, TRX Miner, Crypto Crops and Crypto Colony. Free to play, linked accounts and one shared Premium clock." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Play the CXL Games network — five free worlds, one account" />
+  <meta property="og:description" content="Your Lightning Quest progress powers your Lightning Miner. Five free CXL Games worlds, five referral links, one shared Premium clock." />
+  <meta property="og:image" content="https://cxlgames.com/assets/project-art/lightning-quest-key-art.png" />
+  <link rel="icon" type="image/png" href="https://cxlgames.com/assets/project-art/lightning-quest-key-art.png" />
+  <!--
+    ============================================================================
+    STANDALONE CXL GAMES REFERRAL HUB — single-file HTML + CSS (no frameworks)
+    ----------------------------------------------------------------------------
+    HOW TO USE
+    1. PASTE YOUR 5 REFERRAL LINKS in the REFERRALS object inside the <script>
+       at the bottom of this file (they look like https://site.com/?ref=CODE).
+       Links left empty fall back to each game's normal sign-up page.
+    2. Upload this one file anywhere (any static host, index.html works fine).
+       Images and fonts load from the web, so nothing else is needed.
+    ============================================================================
+  -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #0a0b10;
+      --card: #121420;
+      --card-2: #171b2b;
+      --line: #232839;
+      --line-2: #333a52;
+      --fg: #f8fafc;
+      --muted: #9aa4b8;
+      --gold: #facc15;
+      --blue: #22d3ee;
+      --red: #f87171;
+      --green: #34d399;
+      --violet: #a78bfa;
+      --head: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+      --body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--fg);
+      font: 400 16px/1.6 var(--body);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    @media (min-width: 1024px) { .wrap { padding: 0 40px; } }
+
+    /* ---------- background decor ---------- */
+    .veil {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(51,58,82,.45) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(51,58,82,.45) 1px, transparent 1px);
+      background-size: 68px 68px;
+      opacity: .4;
+    }
+    .orb { position: absolute; border-radius: 999px; filter: blur(140px); pointer-events: none; }
+    .orb.gold { background: rgba(250,204,21,.16); height: 560px; width: 900px; top: -176px; left: 50%; transform: translateX(-50%); }
+    .orb.blue { background: rgba(34,211,238,.15); height: 420px; width: 620px; bottom: -160px; right: 0; }
+
+    /* ---------- buttons ---------- */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--gold); color: var(--bg);
+      font-family: var(--head); font-weight: 600; font-size: 15px;
+      padding: 12px 22px; border: 1px solid transparent; border-radius: 12px;
+      cursor: pointer; transition: background .2s, border-color .2s;
+    }
+    .btn:hover { background: #fcd34d; }
+    .btn.lg { padding: 14px 26px; font-size: 16px; }
+    .btn.sm { padding: 8px 16px; font-size: 14px; }
+    .btn.outline { background: transparent; color: var(--fg); border-color: var(--line-2); }
+    .btn.outline:hover { border-color: var(--muted); background: transparent; }
+    .btn.copy { width: 46px; height: 46px; padding: 0; flex: none; }
+    .btn.copy svg { display: block; }
+    .btn.copy .icon-check { display: none; color: var(--gold); }
+    .btn.copy.copied .icon-check { display: block; }
+    .btn.copy.copied .icon-copy { display: none; }
+
+    /* ---------- nav + hero ---------- */
+    .nav { position: relative; display: flex; align-items: center; justify-content: space-between; padding-top: 24px; padding-bottom: 24px; }
+    .brand { font-family: var(--head); font-size: 14px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; }
+    .brand b { color: var(--gold); font-weight: 600; }
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-links .anchor { display: none; font-size: 14px; font-weight: 500; color: var(--muted); transition: color .2s; }
+    .nav-links .anchor:hover { color: var(--fg); }
+    @media (min-width: 640px) { .nav-links .anchor { display: block; } }
+
+    .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+    .hero-grid { position: relative; display: grid; gap: 56px; padding-top: 32px; padding-bottom: 96px; }
+    @media (min-width: 1024px) {
+      .hero-grid { grid-template-columns: 1.05fr .95fr; align-items: center; gap: 80px; padding-top: 56px; padding-bottom: 112px; }
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--line); border-radius: 999px; background: rgba(18,20,32,.6);
+      padding: 6px 16px; font-size: 11px; font-weight: 600; letter-spacing: .26em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .eyebrow svg { color: var(--gold); }
+    .h1 {
+      margin-top: 24px; font-family: var(--head); font-weight: 700;
+      font-size: clamp(2.5rem, 6vw, 3.9rem); line-height: 1.05; letter-spacing: -0.02em;
+    }
+    .h1 .gold { color: var(--gold); }
+    .lede { margin-top: 24px; max-width: 36rem; font-size: 18px; color: var(--muted); }
+    .btn-row { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .stats { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; border-top: 1px solid var(--line); padding-top: 32px; }
+    .stats dt { font-family: var(--head); font-size: 30px; font-weight: 700; }
+    .stats dd { margin-top: 4px; font-size: 13px; color: var(--muted); }
+    .hero-art { position: relative; }
+    .hero-frame {
+      border: 1px solid var(--line); border-radius: 28px; background: rgba(18,20,32,.4); padding: 8px;
+      box-shadow: 0 0 0 1px rgba(250,204,21,.22), 0 24px 70px -28px rgba(250,204,21,.5);
+    }
+    .hero-frame img { width: 100%; height: 300px; object-fit: cover; border-radius: 22px; }
+    @media (min-width: 640px) { .hero-frame img { height: 420px; } }
+    .hero-badge {
+      position: absolute; left: 16px; right: 16px; bottom: -28px;
+      border: 1px solid rgba(250,204,21,.3); border-radius: 16px; background: rgba(10,11,16,.88);
+      padding: 16px 20px; animation: float 7s ease-in-out infinite;
+    }
+    @media (min-width: 640px) { .hero-badge { left: 32px; right: auto; width: 288px; } }
+    .hero-badge .label { display: flex; align-items: center; gap: 8px; font-family: var(--head); font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--gold); }
+    .hero-badge p { margin-top: 8px; font-size: 14px; color: var(--muted); }
+    .hero-badge b { color: var(--fg); }
+
+    /* ---------- sections ---------- */
+    .sec { position: relative; padding: 96px 0; border-bottom: 1px solid var(--line); }
+    .kicker { font-family: var(--head); font-size: 11px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
+    .h2 { margin-top: 16px; font-family: var(--head); font-weight: 700; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.1; letter-spacing: -0.02em; max-width: 22ch; }
+    .sub { margin-top: 20px; max-width: 38rem; font-size: 18px; color: var(--muted); }
+    .note { margin-top: 32px; font-size: 14px; color: var(--muted); }
+
+    /* ---------- accent helpers ---------- */
+    .t-gold { color: var(--gold); } .t-blue { color: var(--blue); } .t-red { color: var(--red); }
+    .t-green { color: var(--green); } .t-violet { color: var(--violet); }
+    .chip { display: inline-block; border-radius: 999px; border: 1px solid; padding: 4px 12px; font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+    .chip.gold { color: var(--gold); border-color: rgba(250,204,21,.3); background: rgba(250,204,21,.1); }
+    .chip.blue { color: var(--blue); border-color: rgba(34,211,238,.3); background: rgba(34,211,238,.1); }
+    .chip.red { color: var(--red); border-color: rgba(248,113,113,.3); background: rgba(248,113,113,.1); }
+    .chip.green { color: var(--green); border-color: rgba(52,211,153,.3); background: rgba(52,211,153,.1); }
+    .chip.violet { color: var(--violet); border-color: rgba(167,139,250,.3); background: rgba(167,139,250,.1); }
+    .chip.plain { color: var(--muted); border-color: var(--line); background: var(--card-2); }
+
+    /* ---------- game cards ---------- */
+    .games-grid { margin-top: 56px; display: grid; gap: 24px; }
+    @media (min-width: 1024px) { .games-grid { grid-template-columns: repeat(12, 1fr); } }
+    .span6, .span12 { grid-column: 1 / -1; }
+    @media (min-width: 1024px) { .span6 { grid-column: span 6; } .span12 { grid-column: span 12; } }
+    .card {
+      display: flex; flex-direction: column; height: 100%;
+      border: 1px solid var(--line); border-radius: 24px; background: rgba(18,20,32,.5);
+      overflow: hidden; transition: transform .4s, border-color .4s;
+    }
+    .card:hover { transform: translateY(-4px); }
+    .card.c-gold:hover { border-color: rgba(250,204,21,.5); }
+    .card.c-blue:hover { border-color: rgba(34,211,238,.5); }
+    .card.c-red:hover { border-color: rgba(248,113,113,.5); }
+    .card.c-green:hover { border-color: rgba(52,211,153,.5); }
+    .card.c-violet:hover { border-color: rgba(167,139,250,.5); }
+    .card-art { position: relative; }
+    .card-art img { width: 100%; height: 192px; object-fit: cover; }
+    .card-art .fade { position: absolute; inset: 0; background: linear-gradient(to top, #121420 4%, rgba(18,20,32,.2) 55%, transparent); }
+    .card-art .chip { position: absolute; top: 16px; left: 16px; }
+    .card-body { display: flex; flex-direction: column; flex: 1; padding: 24px; }
+    .kind { font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+    .card h3 { margin-top: 8px; font-family: var(--head); font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+    .tagline { margin-top: 8px; font-size: 14px; font-weight: 500; }
+    .blurb { margin-top: 16px; font-size: 14px; color: var(--muted); }
+    .points { margin-top: 20px; display: grid; gap: 8px; }
+    .points li { position: relative; padding-left: 24px; font-size: 14px; color: var(--muted); }
+    .points li::before { content: "✓"; position: absolute; left: 0; top: 0; font-weight: 600; }
+    .card.c-gold .points li::before { color: var(--gold); }
+    .card.c-blue .points li::before { color: var(--blue); }
+    .card.c-red .points li::before { color: var(--red); }
+    .card.c-green .points li::before { color: var(--green); }
+    .card.c-violet .points li::before { color: var(--violet); }
+    .qlink {
+      margin-top: 20px; display: flex; gap: 10px; align-items: flex-start;
+      border: 1px solid; border-radius: 12px; padding: 10px 14px; font-size: 12px; line-height: 1.4;
+    }
+    .qlink svg { flex: none; margin-top: 1px; }
+    .card-cta { margin-top: 24px; display: flex; gap: 12px; align-items: stretch; }
+    .card-cta .btn.grow { flex: 1; }
+
+    /* featured card */
+    .featured { position: relative; overflow: hidden; background: rgba(18,20,32,.6); }
+    .featured .orb-sm { position: absolute; top: -96px; right: -96px; height: 288px; width: 288px; border-radius: 999px; background: rgba(250,204,21,.1); filter: blur(110px); pointer-events: none; }
+    .featured-in { position: relative; display: grid; gap: 32px; padding: 28px; }
+    @media (min-width: 1024px) { .featured-in { grid-template-columns: 1.1fr .9fr; align-items: center; gap: 48px; padding: 40px; } }
+    .featured .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .featured h3 { margin-top: 20px; font-family: var(--head); font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 700; letter-spacing: -0.01em; }
+    .featured .tagline { margin-top: 12px; font-family: var(--head); font-size: 16px; font-weight: 600; }
+    .featured .points { margin-top: 24px; }
+    @media (min-width: 640px) { .featured .points { grid-template-columns: 1fr 1fr; } }
+    .feature-frame {
+      border: 1px solid var(--line); border-radius: 26px; background: rgba(10,11,16,.6); padding: 8px;
+      box-shadow: 0 0 0 1px rgba(250,204,21,.22), 0 24px 70px -28px rgba(250,204,21,.5);
+    }
+    .feature-frame img { width: 100%; height: 256px; object-fit: cover; border-radius: 20px; }
+    @media (min-width: 640px) { .feature-frame img { height: 320px; } }
+    @media (min-width: 1024px) { .feature-frame img { height: 380px; } }
+
+    /* ---------- power flow ---------- */
+    .flow { margin-top: 64px; display: flex; flex-direction: column; gap: 16px; }
+    @media (min-width: 1024px) { .flow { flex-direction: row; align-items: center; gap: 12px; } }
+    .flow-card { border-radius: 24px; padding: 28px; flex: 1; border: 1px solid var(--line); background: rgba(18,20,32,.6); }
+    .flow-card.gold { border-color: rgba(250,204,21,.3); }
+    .flow-card.blue { border-color: rgba(34,211,238,.3); }
+    .flow-card.red { border-color: rgba(248,113,113,.3); }
+    .flow-label { font-family: var(--head); font-size: 10px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; }
+    .flow-card h3 { margin-top: 12px; font-family: var(--head); font-size: 22px; font-weight: 700; }
+    .flow-card p { margin-top: 8px; font-size: 14px; color: var(--muted); }
+    .flow-stat {
+      margin-top: 20px; display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(250,204,21,.3); border-radius: 12px; background: rgba(250,204,21,.1);
+      padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--gold);
+    }
+    .converter { flex: none; width: 100%; }
+    @media (min-width: 1024px) { .converter { width: 280px; } }
+    .converter-frame {
+      border: 1px solid var(--line); border-radius: 26px; background: rgba(10,11,16,.6); padding: 8px;
+      box-shadow: 0 0 0 1px rgba(34,211,238,.22), 0 24px 70px -28px rgba(34,211,238,.5);
+    }
+    .converter-frame img { width: 100%; height: 224px; object-fit: cover; border-radius: 20px; }
+    .converter .label { text-align: center; padding: 12px 8px 4px; font-family: var(--head); font-size: 10px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--blue); }
+    .outputs { flex: 1; display: grid; gap: 16px; }
+    .trace { display: block; margin: 0 auto; }
+    .trace.h { display: none; }
+    @media (min-width: 1024px) {
+      .flow { align-items: center; }
+      .trace.v { display: none; }
+      .trace.h { display: block; flex: none; }
+    }
+    .energy-trace { stroke-dasharray: 5 9; animation: energy-flow 1.8s linear infinite; }
+    .facts { margin-top: 56px; display: grid; gap: 20px; }
+    @media (min-width: 640px) { .facts { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .facts { grid-template-columns: repeat(4, 1fr); } }
+    .fact { border: 1px solid var(--line); border-radius: 16px; background: rgba(18,20,32,.4); padding: 24px; }
+    .fact .arrow { color: var(--gold); font-size: 18px; line-height: 1; }
+    .fact h4 { margin-top: 16px; font-family: var(--head); font-size: 16px; font-weight: 600; }
+    .fact p { margin-top: 8px; font-size: 14px; color: var(--muted); }
+
+    /* ---------- premium / network ---------- */
+    .hub-grid { display: grid; gap: 48px; }
+    @media (min-width: 1024px) { .hub-grid { grid-template-columns: .9fr 1.1fr; gap: 64px; } }
+    .benefits { margin-top: 32px; display: grid; gap: 16px; }
+    .benefit { display: flex; gap: 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(18,20,32,.4); padding: 20px; }
+    .benefit .ico { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid rgba(250,204,21,.3); border-radius: 12px; background: rgba(250,204,21,.1); color: var(--gold); }
+    .benefit h4 { font-family: var(--head); font-size: 16px; font-weight: 600; }
+    .benefit p { margin-top: 6px; font-size: 14px; color: var(--muted); }
+    .hub-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+    .hub-cta .price { font-size: 14px; color: var(--muted); }
+    .perks { margin-top: 20px; display: grid; gap: 16px; }
+    @media (min-width: 640px) { .perks { grid-template-columns: 1fr 1fr; } }
+    .perk { border: 1px solid var(--line); border-radius: 16px; background: rgba(18,20,32,.4); padding: 20px; }
+    .perk.wide { grid-column: 1 / -1; }
+    @media (min-width: 640px) { .perk.wide { grid-column: span 2; } }
+    .perk h4 { font-family: var(--head); font-size: 16px; font-weight: 600; }
+    .perk ul { margin-top: 12px; display: grid; gap: 6px; }
+    .perk li { font-size: 14px; color: var(--muted); }
+
+    /* ---------- steps ---------- */
+    .steps { margin-top: 56px; display: grid; gap: 24px; }
+    @media (min-width: 1024px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+    .step { position: relative; border: 1px solid var(--line); border-radius: 24px; background: rgba(18,20,32,.4); padding: 28px; }
+    .step-top { display: flex; align-items: center; justify-content: space-between; }
+    .step .ico { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid rgba(250,204,21,.3); border-radius: 12px; background: rgba(250,204,21,.1); color: var(--gold); }
+    .step .num { font-family: var(--head); font-size: 28px; font-weight: 700; color: var(--line-2); }
+    .step h3 { margin-top: 20px; font-family: var(--head); font-size: 18px; font-weight: 600; }
+    .step p { margin-top: 10px; font-size: 14px; color: var(--muted); }
+    .cta-panel {
+      margin-top: 40px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between;
+      border: 1px solid rgba(250,204,21,.25); border-radius: 24px; background: rgba(250,204,21,.06); padding: 28px;
+    }
+    .cta-panel h3 { font-family: var(--head); font-size: 18px; font-weight: 600; }
+    .cta-panel .small { margin-top: 6px; font-size: 14px; color: var(--muted); }
+    .cta-panel .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    /* ---------- faq ---------- */
+    .faq-wrap { max-width: 720px; margin-top: 40px; }
+    .faq-wrap details { border-bottom: 1px solid var(--line); }
+    .faq-wrap summary {
+      cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      padding: 20px 0; font-family: var(--head); font-size: 16px; font-weight: 600;
+    }
+    .faq-wrap summary::-webkit-details-marker { display: none; }
+    .faq-wrap summary::after { content: "+"; color: var(--gold); font-size: 22px; font-weight: 400; transition: transform .2s; flex: none; }
+    .faq-wrap details[open] summary::after { transform: rotate(45deg); }
+    .faq-wrap .a { padding-bottom: 20px; font-size: 15px; color: var(--muted); max-width: 60ch; }
+
+    /* ---------- footer ---------- */
+    footer { position: relative; }
+    .foot-cta {
+      position: relative; overflow: hidden; text-align: center;
+      border: 1px solid var(--line); border-radius: 32px; background: rgba(18,20,32,.5); padding: 56px 28px;
+      box-shadow: 0 0 0 1px rgba(250,204,21,.22), 0 24px 70px -28px rgba(250,204,21,.5);
+    }
+    .foot-cta h2 { font-family: var(--head); font-weight: 700; font-size: clamp(1.6rem, 3.4vw, 2.4rem); letter-spacing: -0.02em; max-width: 26ch; margin: 0 auto; }
+    .foot-cta p { margin: 20px auto 0; max-width: 34rem; font-size: 18px; color: var(--muted); }
+    .foot-cta .btn-row { justify-content: center; margin-top: 32px; }
+    .foot-grid { margin-top: 64px; padding-top: 40px; padding-bottom: 80px; border-top: 1px solid var(--line); display: grid; gap: 40px; }
+    @media (min-width: 1024px) { .foot-grid { grid-template-columns: 1.2fr .6fr .8fr; } }
+    .foot-grid h5 { font-family: var(--head); font-size: 11px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); }
+    .foot-grid p, .foot-grid a { margin-top: 16px; display: block; font-size: 14px; color: var(--muted); }
+    .foot-grid a:hover { color: var(--gold); }
+
+    @keyframes energy-flow { to { stroke-dashoffset: -28; } }
+    @keyframes float { 0%, 100% { transform: translateY(-6px); } 50% { transform: translateY(6px); } }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .energy-trace, .hero-badge { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="veil"></div>
+    <div class="orb gold"></div>
+    <div class="orb blue"></div>
+
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="https://cxlgames.com" target="_blank" rel="noopener noreferrer">CXL <b>Games</b></a>
+        <div class="nav-links">
+          <a class="anchor" href="#games">The five worlds</a>
+          <a class="btn sm" data-game="lightning-quest" href="https://lightningquest.net/signup" target="_blank" rel="noopener noreferrer">Register free</a>
+        </div>
+      </nav>
+
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>
+            CXL Games referral hub
+          </span>
+          <h1 class="h1">One engine.<br /><span class="gold">Five worlds.</span><br />All connected.</h1>
+          <p class="lede">
+            Lightning Quest is the engine behind the rest of the network. Clear campaign areas and your
+            Linked Miner grows stronger in Lightning Miner, while every world you join shares the same
+            Premium clock. Five free games, five links, one account network.
+          </p>
+          <div class="btn-row">
+            <a class="btn lg" data-game="lightning-quest" href="https://lightningquest.net/signup" target="_blank" rel="noopener noreferrer">
+              Start with Lightning Quest
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+            <a class="btn lg outline" href="#games">See all five games</a>
+          </div>
+          <dl class="stats">
+            <div><dt>5</dt><dd>free worlds</dd></div>
+            <div><dt>+1%</dt><dd>mining power per area cleared</dd></div>
+            <div><dt>1</dt><dd>shared Premium clock</dd></div>
+          </dl>
+        </div>
+
+        <div class="hero-art">
+          <div class="hero-frame">
+            <img src="https://media.base44.com/images/public/6ae0e9b8059884e5379342a3/86340b666_generated_image.png" alt="A glowing energy core connecting to five floating worlds" />
+          </div>
+          <div class="hero-badge">
+            <span class="label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.27a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.27a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+              Linked Miner
+            </span>
+            <p>Every Lightning Quest area you clear adds <b>+1% power</b> to your Lightning Miner.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ THE FIVE LINKS ============ -->
+    <section id="games" class="sec">
+      <div class="wrap">
+        <p class="kicker">The referral links</p>
+        <h2 class="h2">Five worlds. Five links. Pick where you start.</h2>
+        <p class="sub">
+          Every card below opens that game's free account page through my link. Register once per world
+          and the accounts belong to you — you can link them all together afterwards on CXL Games.
+        </p>
+
+        <div class="games-grid">
+          <!-- Lightning Miner -->
+          <div class="span6">
+            <article class="card c-blue">
+              <div class="card-art">
+                <img src="https://cxlgames.com/assets/project-art/lightning-miner-key-art.png" alt="Lightning Miner key art" />
+                <div class="fade"></div>
+                <span class="chip blue">Live now</span>
+              </div>
+              <div class="card-body">
+                <p class="kind">Mining world</p>
+                <h3>Lightning Miner</h3>
+                <p class="tagline t-blue">Build a mining facility that runs on the activities you already do.</p>
+                <p class="blurb">Place miners on racks, keep the facility powered with faucet claims, quests, minigames and offerwalls, then take your share of the active mining pool in the currency you choose.</p>
+                <ul class="points">
+                  <li>Starter Node and four racks installed free</li>
+                  <li>Quests, Battle Pass and a player marketplace</li>
+                  <li>Withdrawals via FaucetPay, BTC Lightning, CXL Wallet or Lightning Quest</li>
+                </ul>
+                <p class="qlink chip blue">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.27a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.27a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                  <span>Linked Miner: +1% mining power for every Lightning Quest area you clear</span>
+                </p>
+                <div class="card-cta">
+                  <a class="btn grow" data-game="lightning-miner" href="https://lightningminer.com/signup" target="_blank" rel="noopener noreferrer">Register under me</a>
+                  <button class="btn outline copy" type="button" data-copy="lightning-miner" aria-label="Copy the Lightning Miner referral link">
+                    <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- TRX Miner -->
+          <div class="span6">
+            <article class="card c-red">
+              <div class="card-art">
+                <img src="https://cxlgames.com/assets/project-art/trx-miner-key-art.png" alt="TRX Miner key art" />
+                <div class="fade"></div>
+                <span class="chip red">Live now</span>
+              </div>
+              <div class="card-body">
+                <p class="kind">TRON mining world</p>
+                <h3>TRX Miner</h3>
+                <p class="tagline t-red">Turn faucet coins into hashpower and mine TRX in the background.</p>
+                <p class="blurb">Claim coins, buy virtual rigs, keep mining energy recharged and let your farm stack a TRX balance. Reinvest it for more power or take an instant FaucetPay withdrawal when eligible.</p>
+                <ul class="points">
+                  <li>Starter Node free, rigs from Common to Mythic</li>
+                  <li>Instant FaucetPay TRX withdrawals when eligible</li>
+                  <li>Lightning Quest and Quest Coins listed among its payout paths</li>
+                </ul>
+                <p class="qlink chip red">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.27a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.27a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                  <span>Your mined value can travel straight into the Lightning Quest economy</span>
+                </p>
+                <div class="card-cta">
+                  <a class="btn grow" data-game="trx-miner" href="https://trxminer.net/signup" target="_blank" rel="noopener noreferrer">Register under me</a>
+                  <button class="btn outline copy" type="button" data-copy="trx-miner" aria-label="Copy the TRX Miner referral link">
+                    <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Lightning Quest — featured -->
+          <div class="span12">
+            <article class="card featured c-gold">
+              <div class="orb-sm"></div>
+              <div class="featured-in">
+                <div>
+                  <div class="chip-row">
+                    <span class="chip gold">Live now</span>
+                    <span class="chip plain">The engine</span>
+                  </div>
+                  <h3>Lightning Quest</h3>
+                  <p class="tagline t-gold">The RPG whose progress powers the rest of the network.</p>
+                  <p class="blurb">Build your knight, push through campaign areas and daily bosses, fight guild raids and grow a Stronghold that pays out hourly coin pool shares. Cleared areas are the number that counts everywhere else.</p>
+                  <ul class="points">
+                    <li>+1% Linked Miner power per campaign area cleared</li>
+                    <li>Daily Boss crypto reward pool and Stronghold coin shares</li>
+                    <li>Guild raids, event gear and achievement badges</li>
+                    <li>Payouts in BTC Lightning, BTC, LTC, SOL, USDC, DOGE, ETH or PayPal</li>
+                  </ul>
+                  <div class="card-cta">
+                    <a class="btn lg" data-game="lightning-quest" href="https://lightningquest.net/signup" target="_blank" rel="noopener noreferrer">Register under me</a>
+                    <button class="btn lg outline copy" type="button" data-copy="lightning-quest">
+                      <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                      <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                      <span class="copy-label">Copy my link</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="feature-frame">
+                  <img src="https://cxlgames.com/assets/project-art/lightning-quest-key-art.png" alt="Lightning Quest key art" />
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Crypto Crops -->
+          <div class="span6">
+            <article class="card c-green">
+              <div class="card-art">
+                <img src="https://cxlgames.com/assets/project-art/crypto-crops-key-art.png" alt="Crypto Crops key art" />
+                <div class="fade"></div>
+                <span class="chip green">Live now</span>
+              </div>
+              <div class="card-body">
+                <p class="kind">Farming world</p>
+                <h3>Crypto Crops</h3>
+                <p class="tagline t-green">Plant permanent seeds and harvest on your own schedule.</p>
+                <p class="blurb">Sixty-plus reusable crops, each with its own grow time and Harvest Point value. Fill farm orders, build mastery and earn a share of funded six-hour Harvest Pools.</p>
+                <ul class="points">
+                  <li>60+ permanent, reusable crop seeds</li>
+                  <li>Harvest Points from funded six-hour pools</li>
+                  <li>Farm orders, guilds, editable farms and buildings</li>
+                </ul>
+                <div class="card-cta">
+                  <a class="btn grow" data-game="crypto-crops" href="https://cryptocrops.net/signup/" target="_blank" rel="noopener noreferrer">Register under me</a>
+                  <button class="btn outline copy" type="button" data-copy="crypto-crops" aria-label="Copy the Crypto Crops referral link">
+                    <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Crypto Colony -->
+          <div class="span6">
+            <article class="card c-violet">
+              <div class="card-art">
+                <img src="https://cxlgames.com/assets/project-art/crypto-colony-key-art.png" alt="Crypto Colony key art" />
+                <div class="fade"></div>
+                <span class="chip violet">Early access</span>
+              </div>
+              <div class="card-body">
+                <p class="kind">Strategy world</p>
+                <h3>Crypto Colony</h3>
+                <p class="tagline t-violet">Build a base, research technology, command a sector.</p>
+                <p class="blurb">A sci-fi strategy world where you expand production, reinforce defenses, invest in research and work with an alliance to reach further across a shared galaxy.</p>
+                <ul class="points">
+                  <li>Base building and a colony economy</li>
+                  <li>Ore gathering, research and technology trees</li>
+                  <li>Alliance play across a shared galaxy</li>
+                </ul>
+                <div class="card-cta">
+                  <a class="btn grow" data-game="crypto-colony" href="https://cryptocolony.net/signup" target="_blank" rel="noopener noreferrer">Register under me</a>
+                  <button class="btn outline copy" type="button" data-copy="crypto-colony" aria-label="Copy the Crypto Colony referral link">
+                    <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <p class="note">Free to play, no purchase required. One account per person — multi-accounting or using VPNs to farm rewards isn't allowed on any of these worlds.</p>
+      </div>
+    </section>
+
+    <!-- ============ HOW THE GAMES CONNECT ============ -->
+    <section id="power" class="sec">
+      <div class="wrap">
+        <p class="kicker">How the games connect</p>
+        <h2 class="h2">Your Quest is the engine.</h2>
+        <p class="sub">
+          The five worlds aren't separate games with a shared logo. Progress, value and membership move
+          between them — and Lightning Quest is where the power is generated.
+        </p>
+
+        <div class="flow">
+          <div class="flow-card gold">
+            <span class="flow-label t-gold">Active input</span>
+            <h3>Lightning Quest</h3>
+            <p>Clear campaign areas, beat daily bosses, run guild raids and level your Stronghold. Every cleared area is stored on your account and read by the mining worlds.</p>
+            <span class="flow-stat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.27a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.27a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+              +1% Linked Miner power per area
+            </span>
+          </div>
+
+          <svg class="trace v" width="24" height="40" viewBox="0 0 24 64" fill="none" aria-hidden="true"><path class="energy-trace" d="M12 2V62" stroke="#facc15" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="trace h" width="64" height="24" viewBox="0 0 64 24" fill="none" aria-hidden="true"><path class="energy-trace" d="M2 12H62" stroke="#facc15" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></svg>
+
+          <div class="converter">
+            <div class="converter-frame">
+              <img src="https://media.base44.com/images/public/6ae0e9b8059884e5379342a3/a8325e37a_generated_image.png" alt="A power cell being slotted into a mining rig" />
+            </div>
+            <p class="label">Energy transfer</p>
+          </div>
+
+          <svg class="trace v" width="24" height="40" viewBox="0 0 24 64" fill="none" aria-hidden="true"><path class="energy-trace" d="M12 2V62" stroke="#22d3ee" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="trace h" width="64" height="24" viewBox="0 0 64 24" fill="none" aria-hidden="true"><path class="energy-trace" d="M2 12H62" stroke="#22d3ee" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></svg>
+
+          <div class="outputs">
+            <div class="flow-card blue">
+              <span class="flow-label t-blue">Passive output</span>
+              <h3>Lightning Miner</h3>
+              <p>The Linked Miner sits in your facility and grows with your campaign — free hashpower that adds to your share of the pool.</p>
+            </div>
+            <div class="flow-card red">
+              <span class="flow-label t-red">Passive output</span>
+              <h3>TRX Miner</h3>
+              <p>Mine TRX, then move value across the network: Quest Coins and Lightning Quest are among its payout paths, under the same Premium clock.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="facts">
+          <div class="fact"><span class="arrow">↓</span><h4>+1% per area cleared</h4><p>Your Linked Miner in Lightning Miner scales with your Lightning Quest campaign: one percent of extra mining power for every area you clear.</p></div>
+          <div class="fact"><span class="arrow">↓</span><h4>It lifts your pool share</h4><p>Lightning Miner's own field guide lists linking eligible Lightning Quest progress as a way to improve your share of the active mining pool.</p></div>
+          <div class="fact"><span class="arrow">↓</span><h4>Value crosses between worlds</h4><p>Lightning Miner wallets support Lightning Quest transfers, and TRX Miner lists Lightning Quest and Quest Coins among its payout paths.</p></div>
+          <div class="fact"><span class="arrow">↓</span><h4>One Premium clock everywhere</h4><p>A single CXL Premium membership syncs across every properly linked game account without duplicating time.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ THE NETWORK HUB ============ -->
+    <section id="premium" class="sec">
+      <div class="wrap">
+        <div class="hub-grid">
+          <div>
+            <p class="kicker">The network hub</p>
+            <h2 class="h2">One profile ties all five worlds together.</h2>
+            <p class="sub">Each game has its own free account, but CXL Games is what connects them. Link any game account to your CXL profile and membership, cashback and Discord rewards follow you in. Linking is optional — it's simply where the extras live.</p>
+
+            <div class="benefits">
+              <div class="benefit">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg></span>
+                <div><h4>One shared Premium clock</h4><p>Buy Premium once and the same expiry applies across every properly linked CXL game account — no duplicated time, automatic sync.</p></div>
+              </div>
+              <div class="benefit">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.9 4.9 0 0 1 12 4a4.9 4.9 0 0 1 4.5-1 2.5 2.5 0 0 1 0 5"/></svg></span>
+                <div><h4>2% back on eligible purchases</h4><p>Eligible crypto purchases return two percent to your CXL Games balance while Premium is active.</p></div>
+              </div>
+              <div class="benefit">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z"/><path d="M21 12h-6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1z"/></svg></span>
+                <div><h4>2× daily Discord rewards</h4><p>With your Discord and game accounts linked, active CXL Premium doubles each linked world's daily Discord claim reward.</p></div>
+              </div>
+            </div>
+
+            <div class="hub-cta">
+              <a class="btn" href="https://cxlgames.com" target="_blank" rel="noopener noreferrer">Open CXL Games</a>
+              <span class="price">Premium is optional: 30 days $7.50 · 60 days $12 · 90 days $15.</span>
+            </div>
+          </div>
+
+          <div>
+            <h5 class="kicker" style="color: var(--muted); letter-spacing: .3em;">Premium, world by world</h5>
+            <div class="perks">
+              <div class="perk wide">
+                <h4 class="t-gold">Lightning Quest</h4>
+                <ul><li>+500 Stronghold power</li><li>+10% XP from every source</li><li>+1 Reflex Dungeon play, +5 energy cap</li><li>25,000 monthly chest progress</li></ul>
+              </div>
+              <div class="perk">
+                <h4 class="t-blue">Lightning Miner</h4>
+                <ul><li>Unlimited mining energy</li><li>+10% effective mining power</li><li>2× faucet and 100 daily coins</li><li>15% referral rewards instead of 10%</li></ul>
+              </div>
+              <div class="perk">
+                <h4 class="t-red">TRX Miner</h4>
+                <ul><li>Unlimited mining energy</li><li>+10% effective mining power</li><li>2× faucet and 100 daily coins</li><li>15% referral rewards instead of 10%</li></ul>
+              </div>
+              <div class="perk">
+                <h4 class="t-green">Crypto Crops</h4>
+                <ul><li>Five-slot Auto Cropper</li><li>+4 active plots</li><li>Two stronger order slots</li><li>Premium Harvest Pass</li></ul>
+              </div>
+              <div class="perk">
+                <h4 class="t-violet">Crypto Colony</h4>
+                <ul><li>+15% Ore output and storage</li><li>+10% Reward Uplink</li><li>15% faster Shipyard fabrication</li><li>One extra building lane</li></ul>
+              </div>
+            </div>
+            <p class="note" style="margin-top: 20px;">The faucet, quests, campaign and every earn path in these worlds stay free to use — Premium only speeds things up.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GETTING STARTED ============ -->
+    <section id="start" class="sec">
+      <div class="wrap">
+        <p class="kicker">Getting started</p>
+        <h2 class="h2">Three steps to join under me.</h2>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-top"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9h6v6H9z"/><path d="M5 5H3v2"/><path d="M19 5h2v2"/><path d="M5 19H3v-2"/><path d="M19 19h2v-2"/><path d="M9 2h6"/><path d="M9 22h6"/></svg></span><span class="num">01</span></div>
+            <h3>Open a world through my link</h3>
+            <p>Use any card above to create your free account. Start with Lightning Quest if you want the strongest opening, since its progress feeds the mining worlds.</p>
+          </div>
+          <div class="step">
+            <div class="step-top"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span><span class="num">02</span></div>
+            <h3>Link your accounts on CXL Games</h3>
+            <p>One CXL profile holds all five worlds. Connect each game account and Premium, cashback and Discord rewards sync automatically.</p>
+          </div>
+          <div class="step">
+            <div class="step-top"><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg></span><span class="num">03</span></div>
+            <h3>Play the Quest, grow the miners</h3>
+            <p>Every Lightning Quest area you clear adds +1% mining power to your Linked Miner in Lightning Miner — earned once, working for you continuously.</p>
+          </div>
+        </div>
+
+        <div class="cta-panel">
+          <div>
+            <h3>Ready? Start with Lightning Quest and build the engine first.</h3>
+            <p class="small">Free account · no purchase required · connect the rest whenever you like.</p>
+          </div>
+          <div class="btns">
+            <a class="btn lg" data-game="lightning-quest" href="https://lightningquest.net/signup" target="_blank" rel="noopener noreferrer">Create my Quest account</a>
+            <a class="btn lg outline" href="https://cxlgames.com" target="_blank" rel="noopener noreferrer">Link accounts</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="faq" class="sec">
+      <div class="wrap">
+        <p class="kicker">Questions</p>
+        <h2 class="h2">Before you register.</h2>
+        <div class="faq-wrap">
+          <details open>
+            <summary>Is this really free?</summary>
+            <p class="a">Yes. All five worlds are free to play and no purchase is required anywhere — the faucet, quests, campaign and everyday earn paths are open to free accounts. Premium exists if you want to speed things up, but nothing on this page needs it.</p>
+          </details>
+          <details>
+            <summary>Do I have to play all five games?</summary>
+            <p class="a">No. Register wherever you like — each account stands on its own. The reason to start with Lightning Quest is that its cleared campaign areas power the Linked Miner in Lightning Miner, so your progress there keeps paying off in a second world.</p>
+          </details>
+          <details>
+            <summary>What exactly is the Linked Miner?</summary>
+            <p class="a">It's a miner Lightning Miner gives you for connecting your Lightning Quest account. It scales with your campaign progress at +1% mining power for every area you clear, and it sits alongside the miners you place on your own racks.</p>
+          </details>
+          <details>
+            <summary>How does playing one game help another?</summary>
+            <p class="a">Three ways. Quest progress lifts your Linked Miner's power in Lightning Miner. Value moves between economies — Lightning Miner wallets support Lightning Quest transfers, and TRX Miner lists Lightning Quest and Quest Coins among its payout paths. And one CXL Premium membership covers every properly linked world at once.</p>
+          </details>
+          <details>
+            <summary>How do withdrawals work?</summary>
+            <p class="a">It varies by game. Lightning Quest pays out in BTC Lightning, BTC, LTC, SOL, USDC, DOGE, ETH or PayPal through a direct wallet, FaucetPay or PayPal. Lightning Miner supports FaucetPay, BTC Lightning, direct Bitcoin, CXL Wallet and Lightning Quest transfers where available. TRX Miner offers instant FaucetPay TRX withdrawals when eligible. Minimums, fees and review requirements are always shown inside each game.</p>
+          </details>
+          <details>
+            <summary>Do I need a CXL Games account?</summary>
+            <p class="a">Not to play — but linking is where the network benefits live: one shared Premium clock, 2% cashback on eligible purchases, 2× daily Discord rewards on linked worlds, and automatic syncing when you add another game later.</p>
+          </details>
+          <details>
+            <summary>Can I run more than one account?</summary>
+            <p class="a">No. Every one of these worlds allows one account per person, and using VPNs, proxies or extra accounts to farm rewards, referrals or withdrawals leads to a ban. Play one honest account per world.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap" style="padding-top: 80px; padding-bottom: 24px;">
+      <div class="foot-cta">
+        <h2>Register once per world. Play them all as one network.</h2>
+        <p>Start with the engine, link the rest when you're ready, and let your Quest progress keep working across every world you join.</p>
+        <div class="btn-row">
+          <a class="btn lg" data-game="lightning-quest" href="https://lightningquest.net/signup" target="_blank" rel="noopener noreferrer">Create my Lightning Quest account</a>
+          <a class="btn lg outline" href="#games">Back to the five links</a>
+        </div>
+      </div>
+
+      <div class="foot-grid">
+        <div>
+          <p class="brand">CXL <b>Games</b></p>
+          <p>An independent referral hub for the CXL Games network. Lightning Quest, Lightning Miner, TRX Miner, Crypto Crops and Crypto Colony are free-to-play games — rewards, withdrawal minimums, fees and availability vary by game and are subject to review.</p>
+        </div>
+        <div>
+          <h5>Explore</h5>
+          <a href="https://cxlgames.com" target="_blank" rel="noopener noreferrer">CXL Games portfolio</a>
+          <a href="https://cxlgames.com/shop" target="_blank" rel="noopener noreferrer">Item Shop</a>
+          <a href="https://cxlgames.com/news" target="_blank" rel="noopener noreferrer">News &amp; updates</a>
+          <a href="https://cxlgames.com/creator" target="_blank" rel="noopener noreferrer">Creator Program</a>
+        </div>
+        <div>
+          <h5>Fair play</h5>
+          <p>One account per person on each world. VPNs, proxies and extra accounts used to farm rewards, referrals or withdrawals will get accounts banned.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /**
+     * ============================================================
+     *  PASTE YOUR 5 REFERRAL LINKS HERE (between the quotes)
+     * ============================================================
+     *  They usually look like https://lightningminer.com/?ref=YOUR-CODE.
+     *  Any link left empty ("") falls back to that game's normal
+     *  sign-up page, so the page always works.
+     */
+    const REFERRALS = {
+      "lightning-quest": "https://lightningquest.net/?ref=LQ-2E01EFD87A17",
+      "lightning-miner": "https://lightningminer.com/signup?ref=Kandil85",
+      "trx-miner": "https://trxminer.net/signup?ref=Kandil85",
+      "crypto-crops": "https://cryptocrops.net/?ref=3UL9GB7FLW",
+      "crypto-colony": "https://cryptocolony.net/?ref=CC-3DAC79B480",
+    };
+
+    // Apply referral links to every matching button on the page
+    document.querySelectorAll("[data-game]").forEach((link) => {
+      const referral = REFERRALS[link.dataset.game];
+      if (referral && referral.trim()) link.href = referral.trim();
+    });
+
+    // Copy-link buttons
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const anchor = document.querySelector(`[data-game="${button.dataset.copy}"]`);
+        const url = anchor ? anchor.href : "";
+        if (!url) return;
+        const done = () => {
+          button.classList.add("copied");
+          const label = button.querySelector(".copy-label");
+          if (label) label.textContent = "Link copied";
+          window.setTimeout(() => {
+            button.classList.remove("copied");
+            if (label) label.textContent = "Copy my link";
+          }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(done).catch(() => {});
+        } else {
+          const input = document.createElement("textarea");
+          input.value = url;
+          document.body.appendChild(input);
+          input.select();
+          try { document.execCommand("copy"); done(); } catch (err) { /* noop */ }
+          document.body.removeChild(input);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
